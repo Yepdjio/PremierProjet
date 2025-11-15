@@ -52,11 +52,28 @@
     nomInput.focus();
   }
 
-  // Ecoute l'événement "Entrée"
-  nomInput.addEventListener("keypress", e => { if (e.key === "Enter")
-ajouter();});
-  montantInput.addEventListener("keypress", e => {if (e.key === "Enter")
-ajouter();  });
+  // Fonction pour réinitialiser la cagnotte
+  function reinitialiser(){
+    if (!confirm("Voulez-vous vraiment réinitialiser la cagnotte ?"))
+
+    contributions = {};
+    total = 0;
+    localStorage.removeItem('contributions');
+  }
+
+  // Entrée dans Nom -> passe au champ Montant
+  nomInput.addEventListener("keypress", e => {
+    if (e.key === "Enter") {
+      montantInput.focus();
+    }
+  });
+
+  // Entrée dans Montant -> ajoute la contribution
+  montantInput.addEventListener("keypress", e => {
+    if (e.key === "Enter") {
+      ajouter();
+    }
+  });
 
 // Affichage initial
 afficher();
