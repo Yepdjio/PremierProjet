@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Cagnotte function</title>
+</head>
+<body>
+    <h1>Cagnotte</h1>
+
+    Nom : <input id="nom" placeholder="Nom">
+    Montant : <input id="montant" type="number" placeholder="£">
+
+    <h2> Total : <span id="total">0</span> £</h2>
+    <ul id="liste"></ul>
+
+    <script>
+    // Récupérer les données depuis le localStorage ou créer un objet vide 
+    let contributions = JSON.parse(localStorage.getItem('contributions')) || {};
+    let total = Object.values(contributions).reduce((a, b) => a + b, 0);
+
+    const nomInput = document.getElementById('nom');
+    const montantInput = document.getElementById('montant');
+    const totalSpan = document.getElementById('total');
+    const listUl = document.getElementById('liste');
+
+    // Fonction pour mettre à jour l'affichage
+    function afficher() {
+        totalSpan.textContent = total;
+        listUl.innerHTML = Object.entries(contributions)
+                                 .map(([n, m]) => `<li>${n} : ${m} £</li>`)
+                                 .join('');
+  }
+  // Fonction pour ajouter une contribution
+  function ajouter() {
+    const nom = nomInput.value.trim();
+    const montant = +montantInput.value;
+    if (!nom || montant <= 0) {
+        alert("Nom ou montant invalide!");
+        return;
+    }
+
+    contributions[nom] = (contributions[nom] || 0) + montant;
+    total += montant;
+
+    // Sauvegarder dans localStorage
+    localStorage.setItem('contributions', JSON.stringify(contributions));
+
+    afficher();
+
+    nomInput.value = "";
+    montantInput.value = "";
+    nomInput.focus();
+  }
+
+  // Ecoute l'événement "Entrée"
+  nomInput.addEventListener("keypress", e => { if (e.key === "Enter")
+ajouter();});
+  montantInput.addEventListener("keypress", e => {if (e.key === "Enter")
+ajouter();  });
+
+// Affichage initial
+afficher();
+    </script>
+</body>
+</html>
