@@ -1,10 +1,84 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-<title></title>
-<link rel="stylesheet" type="text/css" href="styles.css">
+    <meta charset="UTF-8">
+    <title>Cagnotte function</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-<h1>Un super titre!!</h1>
+    <h1 class = "Cagnotte"></h1class>CagnotteL</h1>
+
+    Nom : <input id="nom" placeholder="Nom">
+    Montant : <input id="montant" type="number" placeholder="£">
+    <button onclick="reinitialiser()">Réinitialiser la cagnotte</button>
+
+    <h2> Total : <span id="total">0</span> £</h2>
+    <ul id="liste"></ul>
+
+    <script>
+    // Récupérer les données depuis le localStorage ou créer un objet vide 
+    let contributions = JSON.parse(localStorage.getItem('contributions')) || {};
+    let total = Object.values(contributions).reduce((a, b) => a + b, 0);
+
+    const nomInput = document.getElementById('nom');
+    const montantInput = document.getElementById('montant');
+    const totalSpan = document.getElementById('total');
+    const listUl = document.getElementById('liste');
+
+    // Fonction pour mettre à jour l'affichage
+    function afficher() {
+        totalSpan.textContent = total;
+        listUl.innerHTML = Object.entries(contributions)
+                                 .map(([n, m]) => `<li>${n} : ${m} £</li>`)
+                                 .join('');
+  }
+  // Fonction pour ajouter une contribution
+  function ajouter() {
+    const nom = nomInput.value.trim();
+    const montant = +montantInput.value;
+    if (!nom || montant <= 0) {
+        alert("Nom ou montant invalide!");
+        return;
+    }
+
+    contributions[nom] = (contributions[nom] || 0) + montant;
+    total += montant;
+
+    // Sauvegarder dans localStorage
+    localStorage.setItem('contributions', JSON.stringify(contributions));
+
+    afficher();
+
+    nomInput.value = "";
+    montantInput.value = "";
+    nomInput.focus();
+  }
+
+  // Fonction pour réinitialiser la cagnotte
+  function reinitialiser(){
+    if (!confirm("Voulez-vous vraiment réinitialiser la cagnotte ?"))
+
+    contributions = {};
+    total = 0;
+    localStorage.removeItem('contributions');
+  }
+
+  // Entrée dans Nom -> passe au champ Montant
+  nomInput.addEventListener("keypress", e => {
+    if (e.key === "Enter") {
+      montantInput.focus();
+    }
+  });
+
+  // Entrée dans Montant -> ajoute la contribution
+  montantInput.addEventListener("keypress", e => {
+    if (e.key === "Enter") {
+      ajouter();
+    }
+  });
+
+// Affichage initial
+afficher();
+    </script>
 </body>
 </html>
